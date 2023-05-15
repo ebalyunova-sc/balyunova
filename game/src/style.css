@@ -1,0 +1,46 @@
+.game {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.board {
+  width: calc(80px * 8);
+  height: calc(80px * 8);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cell {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.white {
+  background-color: whitesmoke;
+}
+
+.black {
+  background-color: slategrey;
+}
+
+.checker {
+  width: 70px;
+  height: 70px;
+  border-radius: 70px;
+  position: relative;
+}
+
+.whiteChecker {
+  background-color: whitesmoke;
+}
+
+
+.blackChecker {
+  background-color: #1c1c1c;
+}
