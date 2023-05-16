@@ -7,15 +7,16 @@
 }
 
 .board {
-  width: calc(80px * 8);
-  height: calc(80px * 8);
+  width: calc(85px * 8);
+  height: calc(85px * 8);
   display: flex;
   flex-wrap: wrap;
+  border: solid slategrey;
 }
 
 .cell {
-  width: 80px;
-  height: 80px;
+  width: 85px;
+  height: 85px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,6 +28,10 @@
 
 .black {
   background-color: slategrey;
+}
+
+.selected {
+  border: solid green;
 }
 
 .checker {

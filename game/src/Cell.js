@@ -6,7 +6,9 @@ export default class Cell extends React.Component {
     checker: Checker | null;
     render() {
         return (
-            <div className={['cell', this.props.color].join(' ')}>
+            <div className={['cell', this.props.color].join(' ')}
+                 onClick={() => this.props.click(this)}
+            >
                 {
                     (this.isEmpty() === false) ? (this.renderChecker()) : <div/>
                 }
@@ -26,5 +28,13 @@ export default class Cell extends React.Component {
                 color={this.props.checker.getColor()}
             />
         )
+    }
+
+    getX() {
+        return this.x;
+    }
+
+    getY() {
+        return this.y;
     }
 }
