@@ -4,7 +4,6 @@ export default class Checker extends React.Component {
     x: number;
     y: number;
     color: string;
-    //checkertype: string;
     
     constructor(x: number, y: number, color: string) {
         super();

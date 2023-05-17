@@ -11,16 +11,24 @@ export default class Player {
         this.checkers = [];
     }
 
-    addCheckerToPlayer(x: number, y: number) {
+    addCheckersToPlayer(x: number, y: number) {
         this.checkers.push(new Checker(x, y, this.color));
     }
 
-    searchCheckersByCoordinates(x: number, y: number) {
+    searchCheckerByCoordinates(x: number, y: number) {
         for (let i = 0; i < this.checkers.length; i++) {
             if (this.checkers[i].getX() === x && this.checkers[i].getY() === y) {
                 return this.checkers[i];
             }
         }
         return null; 
+    }
+    
+    searchSelectedChecker() {
+        for (let i = 0; i < this.checkers.length; i++) {
+            if (this.checkers[i].classList.contains('selected')) {
+                return this.checkers[i];
+            }
+        }
     }
 }

@@ -30,9 +30,7 @@
   background-color: slategrey;
 }
 
-.selected {
-  border: solid green;
-}
+.selectedCell {}
 
 .checker {
   width: 70px;
@@ -48,4 +46,8 @@
 
 .blackChecker {
   background-color: #1c1c1c;
+}
+
+.selected {
+  border: solid green;
 }
