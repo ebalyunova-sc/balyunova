@@ -1,4 +1,3 @@
-import Cell from './Cell';
 import Checker from './Checker';
 import Player from './Player';
 
@@ -26,7 +25,7 @@ export function createBoard(whitePlayer: Player, blackPlayer: Player) {
             else {
                 checker = null;
             }
-            row.push(new Cell(x, y, color, checker));
+            row.push({x, y, color, checker});
         }
         board.push(row);
     }
@@ -50,6 +49,11 @@ export function addCheckers(whitePlayer: Player, blackPlayer: Player) {
     }
 }
 
-export function move(board: []) {
-    //мдэм
+export function move(whitePlayer: Player, blackPlayer: Player, {x1, y1}, {x2, y2}) {
+    if (whitePlayer.searchCheckerByCoordinates(x1, y1) !== null) {
+        whitePlayer.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
+    }
+    if (blackPlayer.searchCheckerByCoordinates(x1, y1) !== null) {
+        blackPlayer.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
+    }
 }

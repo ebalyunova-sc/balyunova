@@ -23,12 +23,4 @@ export default class Player {
         }
         return null; 
     }
-    
-    searchSelectedChecker() {
-        for (let i = 0; i < this.checkers.length; i++) {
-            if (this.checkers[i].classList.contains('selected')) {
-                return this.checkers[i];
-            }
-        }
-    }
 }

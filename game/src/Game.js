@@ -5,29 +5,36 @@ import {createBoard, addCheckers, move} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
+    constructor(props) {
+        super(props);
+        this.selectedCellsForMove = this.selectedCellsForMove.bind(this);
+        this.selectedCellWithChecker = {x: null, y: null};
+        this.selectedCellWithoutChecker = {x: null, y: null};
+    }
+
+    selectedCellsForMove(x: number, y: number, isEmpty: Boolean, color: string) {
+        if (this.selectedCellWithChecker.x === null
+            && this.selectedCellWithChecker.y === null) {
+            if (isEmpty === false) {
+                this.selectedCellWithChecker = {x: x, y: y};
+            }
+        }
+        else {
+            if (isEmpty === true && color === 'black') {
+                this.selectedCellWithoutChecker = {x: x, y: y};
+                alert('x1 - ' + this.selectedCellWithChecker.x + ', y1 - ' + this.selectedCellWithChecker.y
+                    + '\nx2 - ' + this.selectedCellWithoutChecker.x + ', y2 - ' + this.selectedCellWithoutChecker.y);
+                this.makeMove();
+            }
+            else {
+                this.selectedCellWithChecker = {x: x, y: y};
+            }
+        }
+    }
+
     board: [];
     whitePlayer: Player;
     blackPlayer: Player;
-    selectedChecker = null;
-
-    onClick (target) {
-        if (target.classList.contains('checker')) {
-            if (this.selectedChecker !== null) {
-                this.selectedChecker.classList.remove('selected');
-            }
-            target.classList.add('selected');
-            this.selectedChecker = target;
-        }
-        
-        if (target.classList.contains('cell' && 'black')
-            && this.selectedChecker !== null) {
-            target.classList.add('selectedCell');
-            move(this.board);
-            target.classList.remove('selectedCell');
-            this.selectedChecker.classList.remove('selected');
-            this.selectedChecker = null;
-        }
-    }
 
     initGame() {
         this.whitePlayer = new Player('whitePlayer', 'white');
@@ -40,14 +47,19 @@ export default class Game extends React.Component {
         this.initGame();
         return (
             <div className='game'
-                 onClick={(click) => this.onClick(click.target)}
             >
                 <Board
                     board={this.board}
                     whitePlayer={this.whitePlayer}
                     blackPlayer={this.blackPlayer}
+                    onClick={this.selectedCellsForMove}
                 />
             </div>
         )
+    }
+
+    makeMove() {
+        move(this.whitePlayer, this.blackPlayer,
+            this.selectedCellWithChecker, this.selectedCellWithoutChecker);
     }
 }

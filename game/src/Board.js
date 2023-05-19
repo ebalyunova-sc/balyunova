@@ -9,15 +9,14 @@ export default class Board extends React.Component {
     return (
         <div className='board'>
           {
-            this.props.board.map((row) =>
+            this.props.board.map((row, index) =>
                 row.map((cell) => (
                     <Cell
                         x={cell.x}
                         y={cell.y}
                         color={cell.color}
                         checker={cell.checker}
-                        key={cell.x*10 + cell.y}
-                        id={cell.x*10 + cell.y}
+                        onClick={() => this.props.onClick(cell.x, cell.y, ((cell.checker === null) ? true : false), cell.color)}
                     />
                 ))
             )
