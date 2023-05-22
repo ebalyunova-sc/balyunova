@@ -50,11 +50,28 @@ export function addCheckers(whitePlayer: Player, blackPlayer: Player) {
     }
 }
 
-export function move(currentPlayer: Player, x1, y1, x2, y2) {
+export function checkingIfMoveIsPossible(currentPlayer: string, x1: number, y1: number, x2: number, y2: number) {
+    if (currentPlayer === 'whitePlayer') {
+        if ((y1 - y2 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        if ((y2 - y1 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+export function move(currentPlayer: Player, x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer.searchCheckerByCoordinates(x1, y1) !== null) {
-        console.log(currentPlayer.searchCheckerByCoordinates(x1, y1).getColor());
         currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
     }
-    //console.log(currentPlayer.searchCheckerByCoordinates(x2, y2).color);
     return currentPlayer;
 }

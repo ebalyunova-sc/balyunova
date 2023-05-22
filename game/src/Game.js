@@ -1,7 +1,7 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, move} from './rules';
+import {createBoard, addCheckers, checkingIfMoveIsPossible, move} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
@@ -29,9 +29,14 @@ export default class Game extends React.Component {
         else {
             if (isEmpty === true && color === 'black') {
                 this.selectedCellWithoutChecker = {x: x, y: y};
-                //alert('x1 - ' + this.selectedCellWithChecker.x + ', y1 - ' + this.selectedCellWithChecker.y
-                //    + '\nx2 - ' + this.selectedCellWithoutChecker.x + ', y2 - ' + this.selectedCellWithoutChecker.y);
-                this.makeMove();
+                if (checkingIfMoveIsPossible(this.currentPlayer,
+                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
+                    this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y)) {
+                    this.makeMove();
+                }
+                else {
+                    this.selectedCellWithoutChecker = {x: null, y: null};
+                }
                 let board = createBoard(this.whitePlayer, this.blackPlayer);
                 this.setState({
                     board: board,
@@ -67,12 +72,20 @@ export default class Game extends React.Component {
         }
     }
 
+
+
     makeMove() {
         if (this.currentPlayer === 'whitePlayer') {
-            this.whitePlayer =
-                move(this.whitePlayer,
-                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-                    this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+            this.whitePlayer = move(this.whitePlayer,
+                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
+                this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+            this.changeCurrentPlayer();
+        }
+        else {
+            this.blackPlayer = move(this.blackPlayer,
+                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
+                this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+            this.changeCurrentPlayer();
         }
         this.setState({
             board: createBoard(this.whitePlayer, this.blackPlayer),
