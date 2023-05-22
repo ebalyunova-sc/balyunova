@@ -5,6 +5,7 @@ export function createBoard(whitePlayer: Player, blackPlayer: Player) {
     let board = [];
     let x, y, color;
     let checker: Checker | null;
+
     for (let i = 1; i < 9; i++) {
         let row = [];
         y = i;
@@ -49,11 +50,11 @@ export function addCheckers(whitePlayer: Player, blackPlayer: Player) {
     }
 }
 
-export function move(whitePlayer: Player, blackPlayer: Player, {x1, y1}, {x2, y2}) {
-    if (whitePlayer.searchCheckerByCoordinates(x1, y1) !== null) {
-        whitePlayer.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
+export function move(currentPlayer: Player, x1, y1, x2, y2) {
+    if (currentPlayer.searchCheckerByCoordinates(x1, y1) !== null) {
+        console.log(currentPlayer.searchCheckerByCoordinates(x1, y1).getColor());
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
     }
-    if (blackPlayer.searchCheckerByCoordinates(x1, y1) !== null) {
-        blackPlayer.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
-    }
+    //console.log(currentPlayer.searchCheckerByCoordinates(x2, y2).color);
+    return currentPlayer;
 }

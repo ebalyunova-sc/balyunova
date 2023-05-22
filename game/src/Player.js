@@ -23,4 +23,9 @@ export default class Player {
         }
         return null; 
     }
+
+    changeCheckerCoordinates(x1: number, y1: number, x2:number, y2: number) {
+        this.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
+        console.log(x2 + ' ' + y2);
+    }
 }
