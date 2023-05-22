@@ -50,6 +50,7 @@ export function addCheckers(whitePlayer: Player, blackPlayer: Player) {
     }
 }
 
+//функции для шага шашки
 export function checkingIfMoveIsPossible(currentPlayer: string, x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
         if ((y1 - y2 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
@@ -70,8 +71,57 @@ export function checkingIfMoveIsPossible(currentPlayer: string, x1: number, y1: 
 }
 
 export function move(currentPlayer: Player, x1: number, y1: number, x2: number, y2: number) {
-    if (currentPlayer.searchCheckerByCoordinates(x1, y1) !== null) {
-        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+    currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+}
+
+//функции для взятия шашки
+export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
+                                         x1: number, y1: number, x2: number, y2: number) {
+    if (currentPlayer === 'whitePlayer' && (y1 - y2 === 2)) {
+        if ((x1 - x2 === 2) && (blackPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null)) {
+            return true;
+        }
+        else if ((x2 - x1 === 2) && (blackPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
-    return currentPlayer;
+    else if (y2 - y1 === 2) {
+        if ((x1 - x2 === 2) && (whitePlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null)) {
+            return true;
+        }
+        else if ((x2 - x1 === 2) && (whitePlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false
+    }
+}
+
+export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
+                     x1: number, y1: number, x2: number, y2: number) {
+    if (currentPlayer === 'whitePlayer') {
+        whitePlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        if (x1 - x2 === 2) {
+            blackPlayer.deleteChecker(x1 - 1, y1 - 1);
+        }
+        else {
+            blackPlayer.deleteChecker(x1 + 1, y1 - 1);
+        }
+    }
+    else {
+        blackPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        if (x1 - x2 === 2) {
+            whitePlayer.deleteChecker(x1 - 1, y1 + 1);
+        }
+        else {
+            whitePlayer.deleteChecker(x1 + 1, y1 + 1);
+        }
+    }
 }

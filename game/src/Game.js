@@ -1,7 +1,8 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, checkingIfMoveIsPossible, move} from './rules';
+import {createBoard, addCheckers, checkingIfMoveIsPossible, move,
+    checkingIfCanTakeChecker, take} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
@@ -32,7 +33,15 @@ export default class Game extends React.Component {
                 if (checkingIfMoveIsPossible(this.currentPlayer,
                     this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
                     this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y)) {
+
                     this.makeMove();
+                }
+                else if (checkingIfCanTakeChecker(
+                    this.whitePlayer, this.blackPlayer, this.currentPlayer,
+                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
+                    this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y)) {
+
+                    this.takeChecker();
                 }
                 else {
                     this.selectedCellWithoutChecker = {x: null, y: null};
@@ -72,17 +81,15 @@ export default class Game extends React.Component {
         }
     }
 
-
-
     makeMove() {
         if (this.currentPlayer === 'whitePlayer') {
-            this.whitePlayer = move(this.whitePlayer,
+            move(this.whitePlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
                 this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
             this.changeCurrentPlayer();
         }
         else {
-            this.blackPlayer = move(this.blackPlayer,
+            move(this.blackPlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
                 this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
             this.changeCurrentPlayer();
@@ -90,6 +97,15 @@ export default class Game extends React.Component {
         this.setState({
             board: createBoard(this.whitePlayer, this.blackPlayer),
         });
+        this.selectedCellWithChecker = {x: null, y: null};
+        this.selectedCellWithoutChecker = {x: null, y: null};
+    }
+
+    takeChecker() {
+        take(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
+            this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+        this.changeCurrentPlayer();
         this.selectedCellWithChecker = {x: null, y: null};
         this.selectedCellWithoutChecker = {x: null, y: null};
     }
