@@ -25,7 +25,9 @@ export default class Player {
     }
 
     changeCheckerCoordinates(x1: number, y1: number, x2:number, y2: number) {
-        this.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
+        if (this.searchCheckerByCoordinates(x1, y1) !== null) {
+            this.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);
+        }
     }
 
     deleteChecker(x: number, y: number) {
