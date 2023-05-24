@@ -77,11 +77,21 @@ export function move(currentPlayer: Player, x1: number, y1: number, x2: number, 
 //функции для взятия шашки
 export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
                                          x1: number, y1: number, x2: number, y2: number) {
-    if (currentPlayer === 'whitePlayer' && (y1 - y2 === 2)) {
-        if ((x1 - x2 === 2) && (blackPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null)) {
+    if (currentPlayer === 'whitePlayer') {
+        return checkingIfCurrentPlayerCanTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
+    }
+    else {
+        return checkingIfCurrentPlayerCanTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
+    }
+}
+
+function checkingIfCurrentPlayerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
+                                               x1: number, y1: number, x2: number, y2: number) {
+    if (y1 - y2 === 2) {
+        if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null)) {
             return true;
         }
-        else if ((x2 - x1 === 2) && (blackPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null)) {
+        else if ((x2 - x1 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null)) {
             return true;
         }
         else {
@@ -89,10 +99,10 @@ export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Playe
         }
     }
     else if (y2 - y1 === 2) {
-        if ((x1 - x2 === 2) && (whitePlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null)) {
+        if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null)) {
             return true;
         }
-        else if ((x2 - x1 === 2) && (whitePlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null)) {
+        else if ((x2 - x1 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null)) {
             return true;
         }
         else {
@@ -107,21 +117,31 @@ export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Playe
 export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
                      x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
-        whitePlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        currentPlayerTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
+    }
+    else {
+        currentPlayerTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
+    }
+}
+
+function currentPlayerTakeChecker(currentPlayer: Player, waitingPlayer: Player,
+                                  x1: number, y1: number, x2: number, y2: number) {
+    if (y1 - y2 === 2) {
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
         if (x1 - x2 === 2) {
-            blackPlayer.deleteChecker(x1 - 1, y1 - 1);
+            waitingPlayer.deleteChecker(x1 - 1, y1 - 1);
         }
         else {
-            blackPlayer.deleteChecker(x1 + 1, y1 - 1);
+            waitingPlayer.deleteChecker(x1 + 1, y1 - 1);
         }
     }
     else {
-        blackPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
         if (x1 - x2 === 2) {
-            whitePlayer.deleteChecker(x1 - 1, y1 + 1);
+            waitingPlayer.deleteChecker(x1 - 1, y1 + 1);
         }
-        else {
-            whitePlayer.deleteChecker(x1 + 1, y1 + 1);
+        else if (y2 - y1 === 2) {
+            waitingPlayer.deleteChecker(x1 + 1, y1 + 1);
         }
     }
 }

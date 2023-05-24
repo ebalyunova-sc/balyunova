@@ -16,7 +16,8 @@ export default class Board extends React.Component {
                         y={cell.y}
                         color={cell.color}
                         checker={cell.checker}
-                        onClick={() => this.props.onClick(cell.x, cell.y, ((cell.checker === null) ? true : false), cell.color)}
+                        onClick={() => this.props.onClick(cell.x, cell.y,
+                            ((cell.checker === null) ? true : false), cell.color)}
                     />
                 ))
             )
