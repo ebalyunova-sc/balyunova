@@ -46,7 +46,6 @@ export default class Game extends React.Component {
                     this.blackPlayer.searchCheckerByCoordinates(x, y) !== null) {
                     this.selectedCellWithChecker = {x: x, y: y};
                 }
-                console.log(this.selectedCellWithChecker.x + ' ' + this.selectedCellWithChecker.y);
             }
         }
         else {
@@ -78,7 +77,6 @@ export default class Game extends React.Component {
                     this.blackPlayer.searchCheckerByCoordinates(x, y) !== null) {
                     this.selectedCellWithChecker = {x: x, y: y};
                 }
-                console.log(this.selectedCellWithChecker.x + ' ' + this.selectedCellWithChecker.y);
             }
         }
     }
