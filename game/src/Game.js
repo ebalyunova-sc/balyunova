@@ -1,8 +1,8 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, checkingIfMoveIsPossible, move,
-    checkingIfCanTakeChecker, take} from './rules';
+import {createBoard, addCheckers, checkingIfPlayerCanPlay,
+    checkingIfMoveIsPossible, move, checkingIfCanTakeChecker, take} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
@@ -35,58 +35,57 @@ export default class Game extends React.Component {
     }
 
     selectedCellsForMove(x: number, y: number, isEmpty: Boolean, color: string) {
-        if (this.selectedCellWithChecker.x === null
-            && this.selectedCellWithChecker.y === null) {
-            if (isEmpty === false) {
-                if (this.currentPlayer === 'whitePlayer' &&
-                    this.whitePlayer.searchCheckerByCoordinates(x, y) !== null) {
-                    this.selectedCellWithChecker = {x: x, y: y};
-                }
-                else if (this.currentPlayer === 'blackPlayer' &&
-                    this.blackPlayer.searchCheckerByCoordinates(x, y) !== null) {
-                    this.selectedCellWithChecker = {x: x, y: y};
-                }
+        if (isEmpty === false) {
+            if (this.currentPlayer === 'whitePlayer' &&
+                this.whitePlayer.searchCheckerByCoordinates(x, y) !== null)
+            {
+                this.selectedCellWithChecker = {x: x, y: y};
+            }
+            else if (this.currentPlayer === 'blackPlayer' &&
+                this.blackPlayer.searchCheckerByCoordinates(x, y) !== null)
+            {
+                this.selectedCellWithChecker = {x: x, y: y};
             }
         }
-        else {
-            if (isEmpty === true && color === 'black') {
-                this.selectedCellWithoutChecker = {x: x, y: y};
+        else if (color === 'black' &&
+            this.selectedCellWithChecker.x !== null && this.selectedCellWithChecker.y !== null)
+        {
+            this.selectedCellWithoutChecker = {x: x, y: y};
 
-                if (this.moveIsPossible()) {
-                    this.makeMove();
-                    this.changeCurrentPlayer();
-                }
-                else if (this.takeCheckerIsPossible()) {
-                    this.takeChecker();
-                    this.changeCurrentPlayer();
-                }
-                else {
-                    this.selectedCellWithoutChecker = {x: null, y: null};
-                }
-                let board = createBoard(this.whitePlayer, this.blackPlayer);
-                this.setState({
-                    board: board,
-                })
+            if (this.moveIsPossible()) {
+                this.makeMove();
+                this.changeCurrentPlayer();
+            }
+            else if (this.takeCheckerIsPossible()) {
+                this.takeChecker();
+                this.changeCurrentPlayer();
             }
             else {
-                if (this.currentPlayer === 'whitePlayer' &&
-                    this.whitePlayer.searchCheckerByCoordinates(x, y) !== null) {
-                    this.selectedCellWithChecker = {x: x, y: y};
-                }
-                else if (this.currentPlayer === 'blackPlayer' &&
-                    this.blackPlayer.searchCheckerByCoordinates(x, y) !== null) {
-                    this.selectedCellWithChecker = {x: x, y: y};
-                }
+                this.selectedCellWithoutChecker = {x: null, y: null};
             }
+            let board = createBoard(this.whitePlayer, this.blackPlayer);
+            this.setState({
+                board: board,
+            })
         }
     }
 
     changeCurrentPlayer() {
         if (this.currentPlayer === 'whitePlayer') {
-            this.currentPlayer = 'blackPlayer';
+            if (checkingIfPlayerCanPlay(this.blackPlayer, this.whitePlayer)) {
+                this.currentPlayer = 'blackPlayer';
+            }
+            else {
+                console.log('white player won');
+            }
         }
         else {
-            this.currentPlayer = 'whitePlayer';
+            if (checkingIfPlayerCanPlay(this.whitePlayer, this.blackPlayer)) {
+                this.currentPlayer = 'whitePlayer';
+            }
+            else {
+                console.log('black player won');
+            }
         }
     }
 

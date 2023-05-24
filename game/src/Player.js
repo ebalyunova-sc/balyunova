@@ -15,6 +15,14 @@ export default class Player {
         this.checkers.push(new Checker(x, y, this.color));
     }
 
+    getCheckers() {
+        return this.checkers;
+    }
+
+    getColor() {
+        return this.color;
+    }
+
     searchCheckerByCoordinates(x: number, y: number) {
         for (let i = 0; i < this.checkers.length; i++) {
             if (this.checkers[i] !== null && this.checkers[i].getX() === x && this.checkers[i].getY() === y) {

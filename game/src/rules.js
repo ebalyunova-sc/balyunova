@@ -50,6 +50,70 @@ export function addCheckers(whitePlayer: Player, blackPlayer: Player) {
     }
 }
 
+// проверка есть ли у игрока возможность ходить
+export function checkingIfPlayerCanPlay(currentPlayer: Player, waitingPlayer: Player) {
+    let checkers = currentPlayer.getCheckers();
+    // проверка каждой шашки может ли она сделать ход до первой найденной
+    for (let i = 0; i < checkers.length; i++) {
+        if (checkers[i] !== null) {
+            let x = checkers[i].getX();
+            let y = checkers[i].getY();
+            // может ли игрок сделать обычный шаг
+            if (currentPlayer.getColor() === 'white') {
+                if ((y !== 1 && x !== 1 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 1, y - 1)) ||
+                    (y !== 1 && x !== 8 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 1, y - 1)))
+                {
+                    return true;
+                }
+            }
+            else {
+                if ((y !== 8 && x !== 1 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 1, y + 1)) ||
+                    (y !== 8 && x !== 8 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 1, y + 1)))
+                {
+                    return true;
+                }
+            }
+            // может ли игрок взять шашку противника
+            if (y !== 2 && x !== 2 &&
+                checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 2, y - 2) &&
+                waitingPlayer.searchCheckerByCoordinates(x - 1, y - 1) !== null)
+            {
+                return true;
+            }
+            else if (y !== 2 && x !== 7 &&
+                checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 2, y - 2) &&
+                waitingPlayer.searchCheckerByCoordinates(x + 1, y - 1) !== null)
+            {
+                return true;
+            }
+            else if (y !== 7 && x !== 2 &&
+                checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 2, y + 2) &&
+                waitingPlayer.searchCheckerByCoordinates(x - 1, y + 1) !== null)
+            {
+                return true;
+            }
+            else if (y !== 7 && x !== 7 &&
+                checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 2, y + 2) &&
+                waitingPlayer.searchCheckerByCoordinates(x + 1,  + 1) !== null)
+            {
+                return true;
+            }
+
+            //console.log(x + ' ' + y +' can\'t move');
+        }
+    }
+    return false;
+}
+
+function checkIfCellIsEmpty(firstPlayer: Player, secondPlayer: Player, x: number, y: number) {
+    if (firstPlayer.searchCheckerByCoordinates(x, y) === null &&
+        secondPlayer.searchCheckerByCoordinates(x, y) === null)
+    {
+        return true;
+    }
+    return false;
+}
+
 //функции для шага шашки
 export function checkingIfMoveIsPossible(currentPlayer: string, x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
