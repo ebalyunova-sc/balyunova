@@ -12,7 +12,7 @@ export default class Cell extends React.Component {
     render() {
         const x = this.props.x;
         const y = this.props.y;
-        let cellIsEmpty = ((this.props.checker === null) ? true : false);
+        const cellIsEmpty = ((this.props.checker === null) ? true : false);
         const color = this.props.color;
         return (
             <div className={['cell', this.props.color].join(' ')}

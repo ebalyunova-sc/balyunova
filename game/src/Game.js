@@ -1,7 +1,7 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove,
+import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove, checkingIfCanTakeChecker,
     checkerCanTakeEnemyChecker, playerCanMoveOrTakeEnemyChecker, move, take} from './rules';
 import './style.css';
 
@@ -11,7 +11,7 @@ export default class Game extends React.Component {
 
         this.selectedCellsForMove = this.selectedCellsForMove.bind(this);
         this.selectedCellWithChecker = {x: null, y: null};
-        this.selectedCellWithoutChecker = {x: null, y: null};
+        this.checkerCanTakeAnotherEnemyChecker = false;
 
         this.currentPlayer = 'whitePlayer';
         this.whitePlayer = new Player('whitePlayer', 'white');
@@ -46,23 +46,23 @@ export default class Game extends React.Component {
         else if (color === 'black' &&
             this.selectedCellWithChecker.x !== null && this.selectedCellWithChecker.y !== null)
         {
-            this.selectedCellWithoutChecker = {x: x, y: y};
+            if (this.makeMove(x, y)) {
+                this.selectedCellWithChecker = {x: null, y: null};
+                this.changeCurrentPlayer();
+            }
+            else if (this.takeEnemyChecker(x, y)) {
+                take(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
 
-            if (this.makeMove()) {
-                this.selectedCellWithChecker = {x: null, y: null};
-                this.selectedCellWithoutChecker = {x: null, y: null};
-                this.changeCurrentPlayer();
-            }
-            else if (take(this.whitePlayer, this.blackPlayer, this.currentPlayer,
-                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-                this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y))
-            {
-                this.selectedCellWithChecker = {x: null, y: null};
-                this.selectedCellWithoutChecker = {x: null, y: null};
-                this.changeCurrentPlayer();
-            }
-            else {
-                this.selectedCellWithoutChecker = {x: null, y: null};
+                if (this.checkingIfCheckerCanTakeAnotherEnemyChecker(x, y))
+                {
+                    this.selectedCellWithChecker.x = x;
+                    this.selectedCellWithChecker.y = y;
+                }
+                else {
+                    this.selectedCellWithChecker = {x: null, y: null};
+                    this.changeCurrentPlayer();
+                }
             }
         }
         let board = createBoard(this.whitePlayer, this.blackPlayer);
@@ -123,16 +123,38 @@ export default class Game extends React.Component {
         }
     }
 
-    makeMove() {
+    makeMove(x: number, y: number) {
         if (this.currentPlayer === 'whitePlayer') {
             return move(this.whitePlayer,
-                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-                this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
         }
         else {
             return move(this.blackPlayer,
-                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-                this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
         }
+    }
+
+    takeEnemyChecker(x: number, y:number) {
+        return checkingIfCanTakeChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
+    }
+
+    checkingIfCheckerCanTakeAnotherEnemyChecker(x: number, y: number) {
+        if (this.currentPlayer === 'whitePlayer') {
+            if (checkerCanTakeEnemyChecker(this.whitePlayer, this.blackPlayer, x, y)) {
+                this.checkerCanTakeAnotherEnemyChecker = true;
+                return true;
+            }
+            this.whitePlayer.changeCheckerSelected(x, y, false);
+        }
+        else {
+            if (checkerCanTakeEnemyChecker(this.blackPlayer, this.whitePlayer, x, y)) {
+                this.checkerCanTakeAnotherEnemyChecker = true;
+                return true;
+            }
+            this.blackPlayer.changeCheckerSelected(x, y, false);
+        }
+        this.checkerCanTakeAnotherEnemyChecker = false;
+        return false;
     }
 }

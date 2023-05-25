@@ -133,22 +133,17 @@ export function playerCanMoveOrTakeEnemyChecker(currentPlayer: Player, waitingPl
     return false;
 }
 
-function cellIsEmpty(firstPlayer: Player, secondPlayer: Player, x: number, y: number) {
-    if (firstPlayer.searchCheckerByCoordinates(x, y) === null &&
-        secondPlayer.searchCheckerByCoordinates(x, y) === null)
-    {
-        return true;
-    }
-    return false;
-}
-
 export function move(currentPlayer: Player, x1: number, y1: number, x2: number, y2: number) {
-    if (currentPlayer.getColor() === 'white' && (y1 - y2 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
+    if (currentPlayer.getColor() === 'white' &&
+        (y1 - y2 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1))
+    {
         currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
         currentPlayer.changeCheckerSelected(x2, y2, false);
         return true;
     }
-    else if (currentPlayer.getColor() === 'black' && ((y2 - y1 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1))) {
+    else if (currentPlayer.getColor() === 'black' &&
+        ((y2 - y1 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)))
+    {
         currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
         currentPlayer.changeCheckerSelected(x2, y2, false);
         return true;
@@ -156,7 +151,45 @@ export function move(currentPlayer: Player, x1: number, y1: number, x2: number, 
     return false;
 }
 
-//функции для взятия шашки
+export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
+                                         x1: number, y1: number, x2: number, y2: number) {
+    if (currentPlayer === 'whitePlayer') {
+        return checkingIfCurrentPlayerCanTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
+    }
+    else {
+        return checkingIfCurrentPlayerCanTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
+    }
+}
+
+function checkingIfCurrentPlayerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
+                                               x1: number, y1: number, x2: number, y2: number) {
+    if (y1 - y2 === 2) {
+        if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null)) {
+            return true;
+        }
+        else if ((x2 - x1 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else if (y2 - y1 === 2) {
+        if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null)) {
+            return true;
+        }
+        else if ((x2 - x1 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false
+    }
+}
+
 export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
                      x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
@@ -170,42 +203,30 @@ export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: st
 function currentPlayerTakeChecker(currentPlayer: Player, waitingPlayer: Player,
                                   x1: number, y1: number, x2: number, y2: number) {
     if (y1 - y2 === 2) {
-        if ((x1 - x2 === 2) &&
-            (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null))
-        {
-            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        if (x1 - x2 === 2) {
             waitingPlayer.deleteChecker(x1 - 1, y1 - 1);
-            currentPlayer.changeCheckerSelected(x2, y2, false);
-            return true;
         }
-        else if ((x2 - x1 === 2)
-            && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null))
-        {
-            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        else {
             waitingPlayer.deleteChecker(x1 + 1, y1 - 1);
-            currentPlayer.changeCheckerSelected(x2, y2, false);
-            return true;
-        }
-    }
-    else if (y2 - y1 === 2) {
-        if ((x1 - x2 === 2) &&
-            (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null))
-        {
-            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
-            waitingPlayer.deleteChecker(x1 - 1, y1 + 1);
-            currentPlayer.changeCheckerSelected(x2, y2, false);
-            return true;
-        }
-        else if ((x2 - x1 === 2) &&
-            (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null))
-        {
-            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
-            waitingPlayer.deleteChecker(x1 + 1, y1 + 1);
-            currentPlayer.changeCheckerSelected(x2, y2, false);
-            return true;
         }
     }
     else {
-        return false
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        if (x1 - x2 === 2) {
+            waitingPlayer.deleteChecker(x1 - 1, y1 + 1);
+        }
+        else if (y2 - y1 === 2) {
+            waitingPlayer.deleteChecker(x1 + 1, y1 + 1);
+        }
     }
+}
+
+function cellIsEmpty(firstPlayer: Player, secondPlayer: Player, x: number, y: number) {
+    if (firstPlayer.searchCheckerByCoordinates(x, y) === null &&
+        secondPlayer.searchCheckerByCoordinates(x, y) === null)
+    {
+        return true;
+    }
+    return false;
 }
