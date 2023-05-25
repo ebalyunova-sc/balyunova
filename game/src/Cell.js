@@ -1,6 +1,5 @@
 import React from 'react';
 import Checker from './Checker';
-import './style.css';
 
 export default class Cell extends React.Component {
     constructor(props) {
@@ -38,6 +37,7 @@ export default class Cell extends React.Component {
         return (
             <Checker
                 color={this.props.checker.getColor()}
+                selected={this.props.checker.getSelected()}
             />
         )
     }

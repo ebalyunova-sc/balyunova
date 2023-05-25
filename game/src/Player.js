@@ -32,6 +32,12 @@ export default class Player {
         return null; 
     }
 
+    changeCheckerSelected(x: number, y: number, selected: Boolean) {
+        if (this.searchCheckerByCoordinates(x, y) !== null) {
+            this.searchCheckerByCoordinates(x, y).changeSelected(selected);
+        }
+    }
+
     changeCheckerCoordinates(x1: number, y1: number, x2:number, y2: number) {
         if (this.searchCheckerByCoordinates(x1, y1) !== null) {
             this.searchCheckerByCoordinates(x1, y1).setCoordinates(x2, y2);

@@ -1,7 +1,7 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, checkingIfPlayerCanPlay,
+import {createBoard, addCheckers, checkingIfCheckerCanMoveOrTake, checkingIfPlayerCanPlay,
     checkingIfMoveIsPossible, move, checkingIfCanTakeChecker, take} from './rules';
 import './style.css';
 
@@ -36,15 +36,11 @@ export default class Game extends React.Component {
 
     selectedCellsForMove(x: number, y: number, isEmpty: Boolean, color: string) {
         if (isEmpty === false) {
-            if (this.currentPlayer === 'whitePlayer' &&
-                this.whitePlayer.searchCheckerByCoordinates(x, y) !== null)
-            {
-                this.selectedCellWithChecker = {x: x, y: y};
+            if (this.currentPlayer === 'whitePlayer') {
+                this.setSelectedCellWithChecker(this.whitePlayer, this.blackPlayer, x, y);
             }
-            else if (this.currentPlayer === 'blackPlayer' &&
-                this.blackPlayer.searchCheckerByCoordinates(x, y) !== null)
-            {
-                this.selectedCellWithChecker = {x: x, y: y};
+            else {
+                this.setSelectedCellWithChecker(this.blackPlayer, this.whitePlayer, x, y);
             }
         }
         else if (color === 'black' &&
@@ -63,11 +59,11 @@ export default class Game extends React.Component {
             else {
                 this.selectedCellWithoutChecker = {x: null, y: null};
             }
-            let board = createBoard(this.whitePlayer, this.blackPlayer);
-            this.setState({
-                board: board,
-            })
         }
+        let board = createBoard(this.whitePlayer, this.blackPlayer);
+        this.setState({
+            board: board,
+        })
     }
 
     changeCurrentPlayer() {
@@ -85,6 +81,23 @@ export default class Game extends React.Component {
             }
             else {
                 console.log('black player won');
+            }
+        }
+    }
+
+    setSelectedCellWithChecker(currentPlayer: Player, waitingPlayer: Player,
+                               x: number, y: number)
+    {
+        if (checkingIfCheckerCanMoveOrTake(currentPlayer, waitingPlayer, x, y)) {
+            if (this.selectedCellWithChecker.x !== null &&
+                this.selectedCellWithChecker.y !== null)
+            {
+                currentPlayer.changeCheckerSelected(
+                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, false);
+            }
+            if (currentPlayer.searchCheckerByCoordinates(x, y) !== null) {
+                this.selectedCellWithChecker = {x: x, y: y};
+                currentPlayer.changeCheckerSelected(x, y, true);
             }
         }
     }

@@ -1,6 +1,5 @@
 import React from 'react';
 import Cell from './Cell';
-import './style.css';
 
 export default class Board extends React.Component {
   board: [];
