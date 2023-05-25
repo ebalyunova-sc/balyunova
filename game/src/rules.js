@@ -50,62 +50,64 @@ export function addCheckers(whitePlayer: Player, blackPlayer: Player) {
     }
 }
 
-export function checkingIfCheckerCanMoveOrTake(currentPlayer: Player, waitingPlayer: Player,
-                                               x: number, y: number)
+export function checkerCanMove(currentPlayer: Player, waitingPlayer: Player,
+                                         x: number, y: number)
 {
-    // может ли шашка сделать обычный шаг
     if (currentPlayer.getColor() === 'white') {
-        if ((y !== 1 && x !== 1 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 1, y - 1)) ||
-            (y !== 1 && x !== 8 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 1, y - 1)))
+        if ((y !== 1 && x !== 1 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y - 1)) ||
+            (y !== 1 && x !== 8 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y - 1)))
         {
             return true;
         }
     }
     else {
-        if ((y !== 8 && x !== 1 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 1, y + 1)) ||
-            (y !== 8 && x !== 8 && checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 1, y + 1)))
+        if ((y !== 8 && x !== 1 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y + 1)) ||
+            (y !== 8 && x !== 8 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y + 1)))
         {
             return true;
         }
     }
-    // может ли шашка взять шашку противника
+    return false;
+}
+
+export function checkerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Player,
+                                               x: number, y: number)
+{
     if (y !== 2 && x !== 2 &&
-        checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 2, y - 2) &&
+        cellIsEmpty(currentPlayer, waitingPlayer, x - 2, y - 2) &&
         waitingPlayer.searchCheckerByCoordinates(x - 1, y - 1) !== null)
     {
         return true;
     }
     else if (y !== 2 && x !== 7 &&
-        checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 2, y - 2) &&
+        cellIsEmpty(currentPlayer, waitingPlayer, x + 2, y - 2) &&
         waitingPlayer.searchCheckerByCoordinates(x + 1, y - 1) !== null)
     {
         return true;
     }
     else if (y !== 7 && x !== 2 &&
-        checkIfCellIsEmpty(currentPlayer, waitingPlayer, x - 2, y + 2) &&
+        cellIsEmpty(currentPlayer, waitingPlayer, x - 2, y + 2) &&
         waitingPlayer.searchCheckerByCoordinates(x - 1, y + 1) !== null)
     {
         return true;
     }
     else if (y !== 7 && x !== 7 &&
-        checkIfCellIsEmpty(currentPlayer, waitingPlayer, x + 2, y + 2) &&
-        waitingPlayer.searchCheckerByCoordinates(x + 1,  + 1) !== null)
+        cellIsEmpty(currentPlayer, waitingPlayer, x + 2, y + 2) &&
+        waitingPlayer.searchCheckerByCoordinates(x + 1, y + 1) !== null)
     {
         return true;
     }
     return false;
 }
 
-// проверка есть ли у игрока возможность ходить
-export function checkingIfPlayerCanPlay(currentPlayer: Player, waitingPlayer: Player) {
+export function playerCanTakeEnemyCheckers(currentPlayer: Player, waitingPlayer: Player) {
     let checkers = currentPlayer.getCheckers();
-    // проверка каждой шашки может ли она сделать ход до первой найденной
     for (let i = 0; i < checkers.length; i++) {
         if (checkers[i] !== null) {
             let x = checkers[i].getX();
             let y = checkers[i].getY();
 
-            if (checkingIfCheckerCanMoveOrTake(currentPlayer, waitingPlayer, x, y)) {
+            if (checkerCanTakeEnemyChecker(currentPlayer, waitingPlayer, x, y)) {
                 return true;
             }
         }
@@ -113,83 +115,48 @@ export function checkingIfPlayerCanPlay(currentPlayer: Player, waitingPlayer: Pl
     return false;
 }
 
-function checkIfCellIsEmpty(firstPlayer: Player, secondPlayer: Player, x: number, y: number) {
+export function playerCanMoveOrTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Player) {
+    let checkers = currentPlayer.getCheckers();
+    for (let i = 0; i < checkers.length; i++) {
+        if (checkers[i] !== null) {
+            let x = checkers[i].getX();
+            let y = checkers[i].getY();
+
+            if (checkerCanMove(currentPlayer, waitingPlayer, x, y)) {
+                return true;
+            }
+            else if (checkerCanTakeEnemyChecker(currentPlayer, waitingPlayer, x, y)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function cellIsEmpty(firstPlayer: Player, secondPlayer: Player, x: number, y: number) {
     if (firstPlayer.searchCheckerByCoordinates(x, y) === null &&
-        secondPlayer.searchCheckerByCoordinates(x, y) === null &&
-        x >= 1 && x <= 8 && y >= 1 && y <= 8)
+        secondPlayer.searchCheckerByCoordinates(x, y) === null)
     {
         return true;
     }
     return false;
 }
 
-//функции для шага шашки
-export function checkingIfMoveIsPossible(currentPlayer: string,
-                                         x1: number, y1: number, x2: number, y2: number)
-{
-    if (currentPlayer === 'whitePlayer') {
-        if ((y1 - y2 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    else {
-        if ((y2 - y1 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-}
-
 export function move(currentPlayer: Player, x1: number, y1: number, x2: number, y2: number) {
-    currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
-    currentPlayer.changeCheckerSelected(x2, y2, false);
+    if (currentPlayer.getColor() === 'white' && (y1 - y2 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1)) {
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        currentPlayer.changeCheckerSelected(x2, y2, false);
+        return true;
+    }
+    else if (currentPlayer.getColor() === 'black' && ((y2 - y1 === 1) && ((x1 - x2 === 1) || (x2 - x1) === 1))) {
+        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+        currentPlayer.changeCheckerSelected(x2, y2, false);
+        return true;
+    }
+    return false;
 }
 
 //функции для взятия шашки
-export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
-                                         x1: number, y1: number, x2: number, y2: number) {
-    if (currentPlayer === 'whitePlayer') {
-        return checkingIfCurrentPlayerCanTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
-    }
-    else {
-        return checkingIfCurrentPlayerCanTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
-    }
-}
-
-function checkingIfCurrentPlayerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
-                                               x1: number, y1: number, x2: number, y2: number) {
-    if (y1 - y2 === 2) {
-        if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null)) {
-            return true;
-        }
-        else if ((x2 - x1 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    else if (y2 - y1 === 2) {
-        if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null)) {
-            return true;
-        }
-        else if ((x2 - x1 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    else {
-        return false
-    }
-}
-
 export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
                      x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
@@ -203,22 +170,42 @@ export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: st
 function currentPlayerTakeChecker(currentPlayer: Player, waitingPlayer: Player,
                                   x1: number, y1: number, x2: number, y2: number) {
     if (y1 - y2 === 2) {
-        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
-        if (x1 - x2 === 2) {
+        if ((x1 - x2 === 2) &&
+            (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null))
+        {
+            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
             waitingPlayer.deleteChecker(x1 - 1, y1 - 1);
+            currentPlayer.changeCheckerSelected(x2, y2, false);
+            return true;
         }
-        else {
+        else if ((x2 - x1 === 2)
+            && (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 - 1) !== null))
+        {
+            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
             waitingPlayer.deleteChecker(x1 + 1, y1 - 1);
+            currentPlayer.changeCheckerSelected(x2, y2, false);
+            return true;
+        }
+    }
+    else if (y2 - y1 === 2) {
+        if ((x1 - x2 === 2) &&
+            (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 + 1) !== null))
+        {
+            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+            waitingPlayer.deleteChecker(x1 - 1, y1 + 1);
+            currentPlayer.changeCheckerSelected(x2, y2, false);
+            return true;
+        }
+        else if ((x2 - x1 === 2) &&
+            (waitingPlayer.searchCheckerByCoordinates(x1 + 1, y1 + 1) !== null))
+        {
+            currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
+            waitingPlayer.deleteChecker(x1 + 1, y1 + 1);
+            currentPlayer.changeCheckerSelected(x2, y2, false);
+            return true;
         }
     }
     else {
-        currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
-        if (x1 - x2 === 2) {
-            waitingPlayer.deleteChecker(x1 - 1, y1 + 1);
-        }
-        else if (y2 - y1 === 2) {
-            waitingPlayer.deleteChecker(x1 + 1, y1 + 1);
-        }
+        return false
     }
-    currentPlayer.changeCheckerSelected(x2, y2, false);
 }

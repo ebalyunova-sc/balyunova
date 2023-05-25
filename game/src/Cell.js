@@ -12,25 +12,25 @@ export default class Cell extends React.Component {
     render() {
         const x = this.props.x;
         const y = this.props.y;
-        let isEmpty = ((this.props.checker === null) ? true : false);
+        let cellIsEmpty = ((this.props.checker === null) ? true : false);
         const color = this.props.color;
         return (
             <div className={['cell', this.props.color].join(' ')}
                  x={x}
                  y={y}
-                 isEmpty={isEmpty}
+                 cellIsEmpty={cellIsEmpty}
                  color={color}
                  onClick={this.getСoordinates}
             >
                 {
-                    (!isEmpty) ? (this.renderChecker()) : <div/>
+                    (!cellIsEmpty) ? (this.renderChecker()) : <div/>
                 }
             </div>
         )
     }
 
     getСoordinates(e) {
-        this.props.onClick(e.target.x, e.target.y, e.target.isEmpty, e.target.color);
+        this.props.onClick(e.target.x, e.target.y, e.target.cellIsEmpty, e.target.color);
     }
 
     renderChecker() {

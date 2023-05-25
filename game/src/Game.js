@@ -1,8 +1,8 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, checkingIfCheckerCanMoveOrTake, checkingIfPlayerCanPlay,
-    checkingIfMoveIsPossible, move, checkingIfCanTakeChecker, take} from './rules';
+import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove,
+    checkerCanTakeEnemyChecker, playerCanMoveOrTakeEnemyChecker, move, take} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
@@ -34,8 +34,8 @@ export default class Game extends React.Component {
         )
     }
 
-    selectedCellsForMove(x: number, y: number, isEmpty: Boolean, color: string) {
-        if (isEmpty === false) {
+    selectedCellsForMove(x: number, y: number, cellIsEmpty: Boolean, color: string) {
+        if (cellIsEmpty === false) {
             if (this.currentPlayer === 'whitePlayer') {
                 this.setSelectedCellWithChecker(this.whitePlayer, this.blackPlayer, x, y);
             }
@@ -48,12 +48,17 @@ export default class Game extends React.Component {
         {
             this.selectedCellWithoutChecker = {x: x, y: y};
 
-            if (this.moveIsPossible()) {
-                this.makeMove();
+            if (this.makeMove()) {
+                this.selectedCellWithChecker = {x: null, y: null};
+                this.selectedCellWithoutChecker = {x: null, y: null};
                 this.changeCurrentPlayer();
             }
-            else if (this.takeCheckerIsPossible()) {
-                this.takeChecker();
+            else if (take(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
+                this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y))
+            {
+                this.selectedCellWithChecker = {x: null, y: null};
+                this.selectedCellWithoutChecker = {x: null, y: null};
                 this.changeCurrentPlayer();
             }
             else {
@@ -68,7 +73,7 @@ export default class Game extends React.Component {
 
     changeCurrentPlayer() {
         if (this.currentPlayer === 'whitePlayer') {
-            if (checkingIfPlayerCanPlay(this.blackPlayer, this.whitePlayer)) {
+            if (playerCanMoveOrTakeEnemyChecker(this.blackPlayer, this.whitePlayer)) {
                 this.currentPlayer = 'blackPlayer';
             }
             else {
@@ -76,7 +81,7 @@ export default class Game extends React.Component {
             }
         }
         else {
-            if (checkingIfPlayerCanPlay(this.whitePlayer, this.blackPlayer)) {
+            if (playerCanMoveOrTakeEnemyChecker(this.whitePlayer, this.blackPlayer)) {
                 this.currentPlayer = 'whitePlayer';
             }
             else {
@@ -88,52 +93,46 @@ export default class Game extends React.Component {
     setSelectedCellWithChecker(currentPlayer: Player, waitingPlayer: Player,
                                x: number, y: number)
     {
-        if (checkingIfCheckerCanMoveOrTake(currentPlayer, waitingPlayer, x, y)) {
-            if (this.selectedCellWithChecker.x !== null &&
-                this.selectedCellWithChecker.y !== null)
-            {
-                currentPlayer.changeCheckerSelected(
-                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, false);
-            }
-            if (currentPlayer.searchCheckerByCoordinates(x, y) !== null) {
-                this.selectedCellWithChecker = {x: x, y: y};
-                currentPlayer.changeCheckerSelected(x, y, true);
+        if (playerCanTakeEnemyCheckers(currentPlayer, waitingPlayer)) {
+            if (checkerCanTakeEnemyChecker(currentPlayer, waitingPlayer, x, y)) {
+                if (this.selectedCellWithChecker.x !== null &&
+                    this.selectedCellWithChecker.y !== null)
+                {
+                    currentPlayer.changeCheckerSelected(
+                        this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, false);
+                }
+                if (currentPlayer.searchCheckerByCoordinates(x, y) !== null) {
+                    this.selectedCellWithChecker = {x: x, y: y};
+                    currentPlayer.changeCheckerSelected(x, y, true);
+                }
             }
         }
-    }
-
-    moveIsPossible() {
-        return checkingIfMoveIsPossible(this.currentPlayer,
-            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-            this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
+        else {
+            if (checkerCanMove(currentPlayer, waitingPlayer, x, y)) {
+                if (this.selectedCellWithChecker.x !== null &&
+                    this.selectedCellWithChecker.y !== null)
+                {
+                    currentPlayer.changeCheckerSelected(
+                        this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, false);
+                }
+                if (currentPlayer.searchCheckerByCoordinates(x, y) !== null) {
+                    this.selectedCellWithChecker = {x: x, y: y};
+                    currentPlayer.changeCheckerSelected(x, y, true);
+                }
+            }
+        }
     }
 
     makeMove() {
         if (this.currentPlayer === 'whitePlayer') {
-            move(this.whitePlayer,
+            return move(this.whitePlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
                 this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
         }
         else {
-            move(this.blackPlayer,
+            return move(this.blackPlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
                 this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
         }
-        this.selectedCellWithChecker = {x: null, y: null};
-        this.selectedCellWithoutChecker = {x: null, y: null};
-    }
-
-    takeCheckerIsPossible() {
-        return checkingIfCanTakeChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
-            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-            this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
-    }
-
-    takeChecker() {
-        take(this.whitePlayer, this.blackPlayer, this.currentPlayer,
-            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y,
-            this.selectedCellWithoutChecker.x, this.selectedCellWithoutChecker.y);
-        this.selectedCellWithChecker = {x: null, y: null};
-        this.selectedCellWithoutChecker = {x: null, y: null};
     }
 }
