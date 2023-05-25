@@ -151,17 +151,17 @@ export function move(currentPlayer: Player, x1: number, y1: number, x2: number, 
     return false;
 }
 
-export function checkingIfCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
+export function playerCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
                                          x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
-        return checkingIfCurrentPlayerCanTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
+        return canTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
     }
     else {
-        return checkingIfCurrentPlayerCanTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
+        return canTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
     }
 }
 
-function checkingIfCurrentPlayerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
+function canTakeChecker(currentPlayer: Player, waitingPlayer: Player,
                                                x1: number, y1: number, x2: number, y2: number) {
     if (y1 - y2 === 2) {
         if ((x1 - x2 === 2) && (waitingPlayer.searchCheckerByCoordinates(x1 - 1, y1 - 1) !== null)) {
@@ -190,17 +190,17 @@ function checkingIfCurrentPlayerCanTakeChecker(currentPlayer: Player, waitingPla
     }
 }
 
-export function take(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
+export function takeEnemyChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
                      x1: number, y1: number, x2: number, y2: number) {
     if (currentPlayer === 'whitePlayer') {
-        currentPlayerTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
+        take(whitePlayer, blackPlayer, x1, y1, x2, y2);
     }
     else {
-        currentPlayerTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
+        take(blackPlayer, whitePlayer, x1, y1, x2, y2);
     }
 }
 
-function currentPlayerTakeChecker(currentPlayer: Player, waitingPlayer: Player,
+function take(currentPlayer: Player, waitingPlayer: Player,
                                   x1: number, y1: number, x2: number, y2: number) {
     if (y1 - y2 === 2) {
         currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);

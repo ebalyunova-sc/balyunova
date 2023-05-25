@@ -1,8 +1,8 @@
 import React from 'react';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove, checkingIfCanTakeChecker,
-    checkerCanTakeEnemyChecker, playerCanMoveOrTakeEnemyChecker, move, take} from './rules';
+import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove, playerCanTakeChecker,
+    checkerCanTakeEnemyChecker, playerCanMoveOrTakeEnemyChecker, move, takeEnemyChecker} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
@@ -46,12 +46,12 @@ export default class Game extends React.Component {
         else if (color === 'black' &&
             this.selectedCellWithChecker.x !== null && this.selectedCellWithChecker.y !== null)
         {
-            if (this.makeMove(x, y)) {
+            if (this.moveChecker(x, y)) {
                 this.selectedCellWithChecker = {x: null, y: null};
                 this.changeCurrentPlayer();
             }
-            else if (this.takeEnemyChecker(x, y)) {
-                take(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+            else if (this.currentPlayerCanTakeEnemyChecker(x, y)) {
+                takeEnemyChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
                     this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
 
                 if (this.checkingIfCheckerCanTakeAnotherEnemyChecker(x, y))
@@ -123,7 +123,7 @@ export default class Game extends React.Component {
         }
     }
 
-    makeMove(x: number, y: number) {
+    moveChecker(x: number, y: number) {
         if (this.currentPlayer === 'whitePlayer') {
             return move(this.whitePlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
@@ -134,8 +134,8 @@ export default class Game extends React.Component {
         }
     }
 
-    takeEnemyChecker(x: number, y:number) {
-        return checkingIfCanTakeChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+    currentPlayerCanTakeEnemyChecker(x: number, y:number) {
+        return playerCanTakeChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
             this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
     }
 
