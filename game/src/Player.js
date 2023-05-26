@@ -44,6 +44,18 @@ export default class Player {
         }
     }
 
+    getCheckersType(x: number, y: number) {
+        if (this.searchCheckerByCoordinates(x, y) !== null) {
+            return this.searchCheckerByCoordinates(x, y).getType();
+        }
+    }
+
+    changeCheckersType(x: number, y: number) {
+        if (this.searchCheckerByCoordinates(x, y) !== null) {
+            this.searchCheckerByCoordinates(x, y).inLady();
+        }
+    }
+
     deleteChecker(x: number, y: number) {
         for (let i = 0; i < this.checkers.length; i++) {
             if (this.checkers[i] !== null && this.checkers[i].getX() === x && this.checkers[i].getY() === y) {

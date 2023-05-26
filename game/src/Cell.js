@@ -37,6 +37,7 @@ export default class Cell extends React.Component {
         return (
             <Checker
                 color={this.props.checker.getColor()}
+                type={this.props.checker.getType()}
                 selected={this.props.checker.getSelected()}
             />
         )

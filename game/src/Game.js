@@ -125,11 +125,11 @@ export default class Game extends React.Component {
 
     moveChecker(x: number, y: number) {
         if (this.currentPlayer === 'whitePlayer') {
-            return move(this.whitePlayer,
+            return move(this.whitePlayer, this.blackPlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
         }
         else {
-            return move(this.blackPlayer,
+            return move(this.blackPlayer, this.whitePlayer,
                 this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
         }
     }

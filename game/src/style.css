@@ -45,7 +45,15 @@
 
 
 .blackChecker {
+  width: 70px;
+  height: 70px;
   background-color: #1c1c1c;
+  position: relative;
+}
+
+.lady {
+  background-image: url('crown_icon.PNG');
+  background-size: cover;
 }
 
 .selected {
