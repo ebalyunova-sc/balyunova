@@ -6,6 +6,31 @@
   align-items: center;
 }
 
+.user {
+  width: 200px;
+  height: calc(85px * 8);
+  justify-content: center;
+  text-align: center;
+  font-family: system-ui;
+  font-size: x-large;
+}
+
+.whiteUser {
+
+}
+
+.blackUser {
+
+}
+
+.currentPlayer {
+  color: green;
+}
+
+.waitingPlayer {
+  color: darkgrey;
+}
+
 .board {
   width: calc(85px * 8);
   height: calc(85px * 8);
@@ -30,7 +55,6 @@
   background-color: slategrey;
 }
 
-.selectedCell {}
 
 .checker {
   width: 70px;
@@ -52,7 +76,7 @@
 }
 
 .lady {
-  background-image: url('crown_icon.PNG');
+  background-image: url('./images/crown_icon.PNG');
   background-size: cover;
 }
 

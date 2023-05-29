@@ -14,6 +14,10 @@ export default class Player {
     addCheckersToPlayer(x: number, y: number) {
         this.checkers.push(new Checker(x, y, this.color));
     }
+    
+    getName() {
+        return this.name;
+    }
 
     getCheckers() {
         return this.checkers;

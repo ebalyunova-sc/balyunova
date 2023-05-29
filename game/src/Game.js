@@ -1,4 +1,5 @@
 import React from 'react';
+import UserInfo from './UserInfo';
 import Board from './Board';
 import Player from './Player';
 import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove, playerCanTakeChecker,
@@ -14,8 +15,8 @@ export default class Game extends React.Component {
         this.checkerCanTakeAnotherEnemyChecker = false;
 
         this.currentPlayer = 'whitePlayer';
-        this.whitePlayer = new Player('whitePlayer', 'white');
-        this.blackPlayer = new Player('blackPlayer', 'black');
+        this.whitePlayer = new Player(this.props.firstUserName, 'white');
+        this.blackPlayer = new Player(this.props.secondUserName, 'black');
         addCheckers(this.whitePlayer, this.blackPlayer);
 
         this.state = {
@@ -26,9 +27,19 @@ export default class Game extends React.Component {
     render() {
         return (
             <div className='game'>
+                <UserInfo
+                    userName={this.props.firstUserName}
+                    color={'white'}
+                    currentPlayer={this.currentPlayer === 'whitePlayer' ? true : false}
+                />
                 <Board
                     board={this.state.board}
                     onClick={this.selectedCellsForMove}
+                />
+                <UserInfo
+                    userName={this.props.secondUserName}
+                    color={'black'}
+                    currentPlayer={this.currentPlayer === 'blackPlayer' ? true : false}
                 />
             </div>
         )
