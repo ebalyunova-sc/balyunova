@@ -115,7 +115,7 @@ export function checkerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer:
 function ladyCheckerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Player,
                                         x: number, y: number)
 {
-    if (x !== 1 && y !== 1 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y - 1)) {
+    if (x > 3 && y > 3 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y - 1)) {
         for (let i = 2; x - i > 1 && y - i > 1; i++) {
             if (waitingPlayer.searchCheckerByCoordinates(x - i, y - i) !== null &&
                 cellIsEmpty(currentPlayer, waitingPlayer, x - i - 1, y - i - 1)) {
@@ -126,7 +126,7 @@ function ladyCheckerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Pl
             }
         }
     }
-    else if ( x !== 8 && y !== 1 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y - 1)) {
+    else if ( x < 6 && y > 3 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y - 1)) {
         for (let i = 2; x + i < 8 && y - i > 1; i++) {
             if (waitingPlayer.searchCheckerByCoordinates(x + i, y - i) !== null &&
                 cellIsEmpty(currentPlayer, waitingPlayer, x + i + 1, y - i - 1)) {
@@ -137,7 +137,7 @@ function ladyCheckerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Pl
             }
         }
     }
-    else if (x !== 1 && y !== 8 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y + 1)) {
+    else if (x > 3 && y < 6 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y + 1)) {
         for (let i = 2; x - i > 1 && y + i < 8; i++) {
             if (waitingPlayer.searchCheckerByCoordinates(x - i, y + i) !== null &&
                 cellIsEmpty(currentPlayer, waitingPlayer, x - i - 1, y + i + 1)) {
@@ -148,7 +148,7 @@ function ladyCheckerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Pl
             }
         }
     }
-    else if (x !== 8 && y !== 8 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y + 1)) {
+    else if (x < 6 && y < 6 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y + 1)) {
         for (let i = 2; x + i < 8 && y + i < 8; i++) {
             if (waitingPlayer.searchCheckerByCoordinates(x + i, y + i) !== null &&
                 cellIsEmpty(currentPlayer, waitingPlayer, x + i + 1, y + i + 1)) {
