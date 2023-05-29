@@ -106,7 +106,61 @@ export function checkerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer:
     {
         return true;
     }
+    else if (currentPlayer.getCheckersType(x, y) === 'lady') {
+        return ladyCheckerCanTakeEnemyChecker(currentPlayer, waitingPlayer, x, y);
+    }
     return false;
+}
+
+function ladyCheckerCanTakeEnemyChecker(currentPlayer: Player, waitingPlayer: Player,
+                                        x: number, y: number)
+{
+    if (x !== 1 && y !== 1 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y - 1)) {
+        for (let i = 2; x - i > 1 && y - i > 1; i++) {
+            if (waitingPlayer.searchCheckerByCoordinates(x - i, y - i) !== null &&
+                cellIsEmpty(currentPlayer, waitingPlayer, x - i - 1, y - i - 1)) {
+                return true;
+            }
+            else if (currentPlayer.searchCheckerByCoordinates(x - i, y - i) !== null) {
+                break;
+            }
+        }
+    }
+    else if ( x !== 8 && y !== 1 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y - 1)) {
+        for (let i = 2; x + i < 8 && y - i > 1; i++) {
+            if (waitingPlayer.searchCheckerByCoordinates(x + i, y - i) !== null &&
+                cellIsEmpty(currentPlayer, waitingPlayer, x + i + 1, y - i - 1)) {
+                return true;
+            }
+            else if (currentPlayer.searchCheckerByCoordinates(x + i, y - i) !== null) {
+                break;
+            }
+        }
+    }
+    else if (x !== 1 && y !== 8 && cellIsEmpty(currentPlayer, waitingPlayer, x - 1, y + 1)) {
+        for (let i = 2; x - i > 1 && y + i < 8; i++) {
+            if (waitingPlayer.searchCheckerByCoordinates(x - i, y + i) !== null &&
+                cellIsEmpty(currentPlayer, waitingPlayer, x - i - 1, y + i + 1)) {
+                return true;
+            }
+            else if (currentPlayer.searchCheckerByCoordinates(x - i, y + i) !== null) {
+                break;
+            }
+        }
+    }
+    else if (x !== 8 && y !== 8 && cellIsEmpty(currentPlayer, waitingPlayer, x + 1, y + 1)) {
+        for (let i = 2; x + i < 8 && y + i < 8; i++) {
+            if (waitingPlayer.searchCheckerByCoordinates(x + i, y + i) !== null &&
+                cellIsEmpty(currentPlayer, waitingPlayer, x + i + 1, y + i + 1)) {
+                return true;
+            }
+            else if (currentPlayer.searchCheckerByCoordinates(x + i, y + i) !== null) {
+                break;
+            }
+        }
+    }
+    return false;
+
 }
 
 export function playerCanTakeEnemyCheckers(currentPlayer: Player, waitingPlayer: Player) {
@@ -183,7 +237,6 @@ function moveLadyChecker(currentPlayer: Player, waitingPlayer: Player,
                          x1: number, y1: number, x2: number, y2: number)
 {
     if (x1 - x2 === y1 - y2 && x1 > x2) {
-        console.log('1');
         for (let i = 1; i <= (x1 - x2); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 - i, y1 - i) === false) {
                 return false;
@@ -194,7 +247,6 @@ function moveLadyChecker(currentPlayer: Player, waitingPlayer: Player,
         return true;
     }
     else if (x2 - x1 === y1 - y2 && x2 > x1) {
-        console.log('2');
         for (let i = 1; i <= (x2 - x1); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 + i, y1 - i) === false) {
                 return false;
@@ -216,7 +268,6 @@ function moveLadyChecker(currentPlayer: Player, waitingPlayer: Player,
         return true;
     }
     else if (x2 - x1 === y2 - y1 && x2 > x1) {
-        console.log('4');
         for (let i = 1; i <= (x2 - x1); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 + i, y1 + i) === false) {
                 return false;
@@ -287,7 +338,7 @@ function checkerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
 function ladyCheckerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
                                    x1: number, y1: number, x2: number, y2: number)
 {
-    if (x1 - x2 === y1 - y2) {
+    if (x1 - x2 === y1 - y2 && x1 > x2) {
         for (let i = 1; i < (x1 - x2 - 1); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 - i, y1 - i) === false) {
                 return false;
@@ -298,7 +349,8 @@ function ladyCheckerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
         }
         return false;
     }
-    else if (x2 - x1 === y1 - y2) {
+    else if (x2 - x1 === y1 - y2 && x1 < x2) {
+
         for (let i = 1; i < (x2 - x1 - 1); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 + i, y1 - i) === false) {
                 return false;
@@ -309,7 +361,7 @@ function ladyCheckerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
         }
         return false;
     }
-    else if (x1 - x2 === y2 - y1) {
+    else if (x1 - x2 === y2 - y1 && x1 > x2) {
         for (let i = 1; i < (x1 - x2 - 1); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 - i, y1 + i) === false) {
                 return false;
@@ -320,7 +372,7 @@ function ladyCheckerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
         }
         return false;
     }
-    else if (x2 - x1 === y2 - y1) {
+    else if (x2 - x1 === y2 - y1 && x1 < x2) {
         for (let i = 1; i < (x2 - x1 - 1); i++) {
             if (cellIsEmpty(currentPlayer, waitingPlayer, x1 + i, y1 + i) === false) {
                 return false;
@@ -346,7 +398,6 @@ export function takeEnemyChecker(whitePlayer: Player, blackPlayer: Player, curre
 
 function take(currentPlayer: Player, waitingPlayer: Player,
                                   x1: number, y1: number, x2: number, y2: number) {
-    console.log(x1 + ' ' + y1 + ', ' + x2 + ' ' + y2);
     if (y1 > y2) {
         currentPlayer.changeCheckerCoordinates(x1, y1, x2, y2);
         if (y2 === 1 && currentPlayer.getColor() === 'white') {
