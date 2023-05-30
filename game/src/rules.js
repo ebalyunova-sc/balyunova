@@ -281,18 +281,7 @@ function moveLadyChecker(currentPlayer: Player, waitingPlayer: Player,
 }
 
 // ф-ии для взятия шашек
-export function playerCanTakeChecker(whitePlayer: Player, blackPlayer: Player, currentPlayer: string,
-                                         x1: number, y1: number, x2: number, y2: number)
-{
-    if (currentPlayer === 'whitePlayer') {
-        return canTakeChecker(whitePlayer, blackPlayer, x1, y1, x2, y2);
-    }
-    else {
-        return canTakeChecker(blackPlayer, whitePlayer, x1, y1, x2, y2);
-    }
-}
-
-function canTakeChecker(currentPlayer: Player, waitingPlayer: Player,
+export function playerCanTakeChecker(currentPlayer: Player, waitingPlayer: Player,
                                                x1: number, y1: number, x2: number, y2: number)
 {
     if (Math.abs(x1 - x2) === 2 && Math.abs(y1 - y2) === 2) {

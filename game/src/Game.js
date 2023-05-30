@@ -2,8 +2,9 @@ import React from 'react';
 import UserInfo from './UserInfo';
 import Board from './Board';
 import Player from './Player';
-import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove, playerCanTakeChecker,
-    checkerCanTakeEnemyChecker, playerCanMoveOrTakeEnemyChecker, move, takeEnemyChecker} from './rules';
+import {createBoard, addCheckers, playerCanTakeEnemyCheckers, checkerCanMove,
+    playerCanTakeChecker, checkerCanTakeEnemyChecker,
+    playerCanMoveOrTakeEnemyChecker, move, takeEnemyChecker} from './rules';
 import './style.css';
 
 export default class Game extends React.Component {
@@ -57,48 +58,17 @@ export default class Game extends React.Component {
         else if (color === 'black' &&
             this.selectedCellWithChecker.x !== null && this.selectedCellWithChecker.y !== null)
         {
-            if (this.moveChecker(x, y)) {
-                this.selectedCellWithChecker = {x: null, y: null};
-                this.changeCurrentPlayer();
+            if (this.currentPlayer === 'whitePlayer') {
+                this.setSelectedCellWithoutChecker(this.whitePlayer, this.blackPlayer, x, y);
             }
-            else if (this.currentPlayerCanTakeEnemyChecker(x, y)) {
-                takeEnemyChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
-                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
-
-                if (this.checkingIfCheckerCanTakeAnotherEnemyChecker(x, y))
-                {
-                    this.selectedCellWithChecker.x = x;
-                    this.selectedCellWithChecker.y = y;
-                }
-                else {
-                    this.selectedCellWithChecker = {x: null, y: null};
-                    this.changeCurrentPlayer();
-                }
+            else {
+                this.setSelectedCellWithoutChecker(this.blackPlayer, this.whitePlayer, x, y);
             }
         }
         let board = createBoard(this.whitePlayer, this.blackPlayer);
         this.setState({
             board: board,
         })
-    }
-
-    changeCurrentPlayer() {
-        if (this.currentPlayer === 'whitePlayer') {
-            if (playerCanMoveOrTakeEnemyChecker(this.blackPlayer, this.whitePlayer)) {
-                this.currentPlayer = 'blackPlayer';
-            }
-            else {
-                console.log('white player won');
-            }
-        }
-        else {
-            if (playerCanMoveOrTakeEnemyChecker(this.whitePlayer, this.blackPlayer)) {
-                this.currentPlayer = 'whitePlayer';
-            }
-            else {
-                console.log('black player won');
-            }
-        }
     }
 
     setSelectedCellWithChecker(currentPlayer: Player, waitingPlayer: Player,
@@ -134,38 +104,53 @@ export default class Game extends React.Component {
         }
     }
 
-    moveChecker(x: number, y: number) {
-        if (this.currentPlayer === 'whitePlayer') {
-            return move(this.whitePlayer, this.blackPlayer,
-                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
+    setSelectedCellWithoutChecker(currentPlayer: Player, waitingPlayer: Player,
+                                  x: number, y: number)
+    {
+        if (playerCanTakeEnemyCheckers(currentPlayer, waitingPlayer)) {
+            if (playerCanTakeChecker(currentPlayer, waitingPlayer,
+                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y))
+            {
+                takeEnemyChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
+                    this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
+                if (checkerCanTakeEnemyChecker(currentPlayer, waitingPlayer, x, y))
+                {
+                    this.checkerCanTakeAnotherEnemyChecker = true;
+                    this.selectedCellWithChecker.x = x;
+                    this.selectedCellWithChecker.y = y;
+                }
+                else {
+                    currentPlayer.changeCheckerSelected(x, y, false);
+                    this.checkerCanTakeAnotherEnemyChecker = false;
+                    this.selectedCellWithChecker = {x: null, y: null};
+                    this.changeCurrentPlayer();
+                }
+            }
         }
-        else {
-            return move(this.blackPlayer, this.whitePlayer,
-                this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
+        else if (move(currentPlayer, waitingPlayer,
+            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y))
+        {
+            this.selectedCellWithChecker = {x: null, y: null};
+            this.changeCurrentPlayer();
         }
     }
 
-    currentPlayerCanTakeEnemyChecker(x: number, y:number) {
-        return playerCanTakeChecker(this.whitePlayer, this.blackPlayer, this.currentPlayer,
-            this.selectedCellWithChecker.x, this.selectedCellWithChecker.y, x, y);
-    }
-
-    checkingIfCheckerCanTakeAnotherEnemyChecker(x: number, y: number) {
+    changeCurrentPlayer() {
         if (this.currentPlayer === 'whitePlayer') {
-            if (checkerCanTakeEnemyChecker(this.whitePlayer, this.blackPlayer, x, y)) {
-                this.checkerCanTakeAnotherEnemyChecker = true;
-                return true;
+            if (playerCanMoveOrTakeEnemyChecker(this.blackPlayer, this.whitePlayer)) {
+                this.currentPlayer = 'blackPlayer';
             }
-            this.whitePlayer.changeCheckerSelected(x, y, false);
+            else {
+                console.log('white player won');
+            }
         }
         else {
-            if (checkerCanTakeEnemyChecker(this.blackPlayer, this.whitePlayer, x, y)) {
-                this.checkerCanTakeAnotherEnemyChecker = true;
-                return true;
+            if (playerCanMoveOrTakeEnemyChecker(this.whitePlayer, this.blackPlayer)) {
+                this.currentPlayer = 'whitePlayer';
             }
-            this.blackPlayer.changeCheckerSelected(x, y, false);
+            else {
+                console.log('black player won');
+            }
         }
-        this.checkerCanTakeAnotherEnemyChecker = false;
-        return false;
     }
 }
